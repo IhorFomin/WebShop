@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -41,8 +42,8 @@ class Product(models.Model):
 
 class CartProduct(models.Model):
 
-    user = models.ForeignKey('Customert', verbose_name="Покупатель", on_delete=models.CASCADE)
-    cart = models.ForeignKey('Cart', verbose_name="Корзина", on_delete=models.CASCADE)
+    user = models.ForeignKey('Customer', verbose_name="Покупатель", on_delete=models.CASCADE)
+    cart = models.ForeignKey('Cart', verbose_name="Корзина", on_delete=models.CASCADE, related_name="related_products")
     product = models.ForeignKey(Product, verbose_name="Товар", on_delete=models.CASCADE)
     qty = models.PositiveBigIntegerField(default=1)
     final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name="Общая цена")
@@ -54,7 +55,7 @@ class CartProduct(models.Model):
 class Cart(models.Model):
 
     owner = models.ForeignKey('Customer', verbose_name="", on_delete=models.CASCADE)
-    products = models.ManyToManyField(CartProduct, blank=True)
+    products = models.ManyToManyField(CartProduct, blank=True, related_name="related_cart")
     total_products = models.PositiveIntegerField(default=0)
     final_price = models.DecimalField(max_digits=9, decimal_places=2, verbose_name="Общая цена")
 
